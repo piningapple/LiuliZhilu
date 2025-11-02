@@ -26,4 +26,17 @@ def getSegmentationWithPinyin(sentence):
 
     return [seg, pin]
 
-print(getSegmentationWithPinyin("是不是"))
+def getSegAndPinText(text):
+    sents = {
+        'chrs': [],   # Нужно инициализировать списки
+        'pinyin': []  # перед использованием append
+    }
+
+    for sent in text:
+        seg = getSegmentationWithPinyin(sent)
+        sents['chrs'].append(seg[0])
+        sents['pinyin'].append(seg[1])
+
+    return sents
+
+#print(getSegAndPinText(['哈喽，请进!', '我找娜娜，他在吗?', '说他明天可以带我们去参观东方明珠.']))

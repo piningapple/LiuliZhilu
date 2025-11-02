@@ -1,86 +1,198 @@
 const form = document.getElementById("form")
 const input = document.getElementById("input")
-const text = document.getElementById("text")
+const textEl = document.getElementById("text")
 const ph = document.getElementById("placeholder")
 const exampleBtn = document.getElementById("exampleBtn")
 const popup = document.getElementById("popup")
 const popupChar = document.getElementById("popupChar")
 const popupText = document.getElementById("popupText")
+const slider = document.getElementById("toggleContainer")
+const textBoth = document.getElementById("both")
+const textChars = document.getElementById("chars")
+const textPinyin = document.getElementById("pinyin")
 
-form.addEventListener("submit", (e) => {
+let originalText = ""
+let sliderState = 0
+
+form.addEventListener("submit", async (e) => {
     e.preventDefault()
     if (input.value != "") {
         ph.style.display = "none"
-        text.innerText = input.value
+        let strs = input.value.replace(/\n/g, '').split(/(?<=[！？。])/).filter(element => element !== '')
+        originalText = input.value
+        if (sliderState === 0) {
+            textEl.innerText = input.value
+        }
+        else if (sliderState === 1) {
+            textEl.innerHTML = await getCharsAndPinyin(strs)
+        }
+        else if (sliderState === 2) {
+            textEl.innerText = await getPinyin(strs)
+        }
+        //lookbehind (?<=...) - позиция, которая предшествует указанному шаблону
         input.value = ""
         closePopup()
     }
 })
 
 exampleBtn.addEventListener("click", () => {
-    input.value = `眼虎流女它坐耍春
-更過安筆行京民胡吧但具自童急且車朱海黑，友升占追王怕故經裏杯汁消背美爸。久太很白！男母四穴寸泉？條至左幾，連菜什黃誰晚語日包鳥珠您父士。
-放做犬；動司請吧把由兄重常，樹羊找北入坡時牙友美「園畫車內法歡寺」能開菜叫呀車畫六了唱頭國外衣拉候弟神。
-貫共反實葉坐五金刀急我春穴：問消國夕帽海孝飛音後、成兄尤雨母植樹兌斥刀後婆，跟只雪福吧波動次現，辛安片棵內里因燈？澡牠師哭力品假根。乞話掃！片苗面。
-丁常一氣別汁青。眼即們已門刃神北八澡扒跳得，皮看拍抱自斤圓京燈：或汗胡，毛青天風學怕：飯神正住條昔尾成。
-主世胡几問刃害急刀司尼昌聲明己汁直做片沒，爸麻老乍果斗月住陽丁，三工怎央蝴采弟他請詞植平發刀十又，士皮成耍院候院明洋立戊巾以鴨。里三正苦干。收蛋金用現首間能民路里化，坐重送珠澡，怪斗呢。
-主長汗做和今帶！秋兔果許進節苦勿杯菜苗頭，畫爬乾申瓜朋頁；呢長由笑錯良門豆在右金鴨校鼻服百請點？六什員連姊安樹兆壯鳥頭六寫才荷；枝進害昌蝶後者巴；屋哥抱成枝會誰知尾原爪喜以蝸石菜位抄口友。
-中長乍鴨入往合嗎在青？英英年故香因笑飯苗校節幾歌可後，開枝又一己拍卜發娘歡手寺用朱刀已良那習筆；公就占常秋山自：穿尾經。清誰追別功面。`
+    input.value = `哈喽，请进！我找娜娜，他在吗？他现在不在，但是马上就回来，请等一会儿！谢谢！不客气，哦，已经回来了！志刚你来得真巧！今天下午小王给我打电话，说他明天可以带我们去参观东方明珠。`
 })
 
-text.addEventListener('mouseup', async (e) => {
+slider.addEventListener("click", async () => {
+
+    if (sliderState === 0) {
+        sliderBall.style.transform = 'translateX(31px)';
+        textChars.style.color = '#374151'
+        textBoth.style.color = 'white'
+        if (originalText){
+            let strs = originalText.replace(/\n/g, '').split(/(?<=[！？。])/).filter(element => element !== '')
+            textEl.innerHTML = await getCharsAndPinyin(strs)
+        }
+        sliderState = 1;
+
+
+    } else if (sliderState === 1) {
+        sliderBall.style.transform = 'translateX(60px)';
+        textBoth.style.color = '#374151'
+        textPinyin.style.color = 'white'
+        if (originalText){
+            let strs = originalText.replace(/\n/g, '').split(/(?<=[！？。])/).filter(element => element !== '')
+            textEl.innerText = await getPinyin(strs)
+        }
+
+        sliderState = 2;
+
+    } else {
+        sliderBall.style.transform = 'translateX(0)';
+        textPinyin.style.color = '#374151'
+        textChars.style.color = 'white'
+        if (originalText)
+            textEl.innerText = originalText
+        sliderState = 0;
+
+    }
+})
+
+textEl.addEventListener('mouseup', async (e) => {
     const selectedText = document.getSelection().toString();
     if (selectedText != "") {
         const mouseX = e.clientX;
         const mouseY = e.clientY;
         addTextToPopup(selectedText, await getTranslation(selectedText))
-        showPopup(mouseX, mouseY)      
+        showPopup(mouseX, mouseY)
 
     }
-    else{
+    else {
         closePopup()
     }
 
 });
 
-async function getTranslation(selectedText){
+async function getTranslation(selectedText) {
     const response = await fetch(`/api/translate/?ch=${selectedText}`)
-    
+
     return await response.json()
 
 }
 
+async function getPinyin(text) {
+    let pinyin = ""
+
+    const response = await fetch("api/pinyin", {
+        method: "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({
+            text: text
+        })
+    });
+    if (response.ok) {
+        data = await response.json();
+        pinyin = data['pinyin']
+        pinyin = pinyin.map(element => element.charAt(0).toUpperCase()+element.slice(1))
+
+        pinyin = pinyin.map(sentence => sentence.replace(/\s*([，。！？])\s*/g, '$1').replace(/\s+/g, ' ').trim()).join(' ');
+
+    } else
+        console.log(response);
+
+
+    return await pinyin
+}
+
+async function getCharsAndPinyin(text) {
+    let pinyinText = ''
+
+    const response = await fetch("api/pinyin", {
+        method: "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({
+            text: text
+        })
+    });
+    if (response.ok) {
+        const data = await response.json();
+        const simb = ['！', '？', '。', ' '];
+
+
+
+        for (let i = 0; i < Object.keys(data['chrs']).length; i++) {
+
+            chrs = data['chrs'][i].split(" ").filter(element => element !== '')
+            pinyin = data['pinyin'][i].split(" ").filter(element => element !== '')
+            pinyin[0] = pinyin[0].charAt(0).toUpperCase()+pinyin[0].slice(1)
+
+
+
+            for (let j = 0; j < chrs.length; j++) {
+                
+
+                if (!chrs[j].includes(simb)) {
+                    pinyinText += '<ruby class="inline-flex flex-col items-center mx-[1px]">' + chrs[j] + '<rt class="text-xs text-gray-500 ">' + pinyin[j] + '</rt></ruby>'
+                }
+                else {
+                    pinyinText += chrs[j]
+                }
+
+            }
+        }
+    }
+    else
+        console.log(response);
+
+
+    return await pinyinText
+}
+
 function showPopup(mouseX, mouseY) {
-    popup.style.left = `${mouseX}px`;
-    popup.style.top = `${mouseY}px`;
+    popup.style.left = `${mouseX} px`;
+    popup.style.top = `${mouseY} px`;
     popup.style.display = "block"
 }
 
-function addTextToPopup(selectedText, translation){
-    if (Object.keys(translation).length !== 0){
+function addTextToPopup(selectedText, translation) {
+    if (Object.keys(translation).length !== 0) {
         popupChar.innerText = translation['character'] + "\n" + translation['pinyin']
         popupText.innerText = ""
-        console.log(translation)
 
-        for (key in translation['definitions']){
-            console.log(translation['definitions'][key])
+        for (key in translation['definitions']) {
             popupText.innerHTML += key + "<br/>"
             //for (let i = 0; i < (translation['definitions'][key]).length; i++) 
             //   popupText.innerHTML += translation['definitions'][key][i] + "<br/>"
         }
     }
-    else{
+    else {
         popupChar.innerText = selectedText
         popupText.innerText = "Перевод не найден"
     }
-    
-        
+
+
 
 }
 
-function closePopup(){
+function closePopup() {
     popup.style.display = "none"
-    
+
 }
 
 
@@ -93,7 +205,7 @@ function closePopup(){
 
 
 /*
- fetch(`/api/translate/?ch=${input.value}`)
+ fetch(`/ api / translate /? ch = ${ input.value } `)
         .then(response => response.text())
         .then(text => {translate.innerText = text});
 */
