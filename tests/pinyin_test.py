@@ -1,4 +1,3 @@
-import pytest
 from pinyin import getPinyin, getSegmentation, getSegAndPinText, getSegmentationWithPinyin
 
 from fastapi.testclient import TestClient
