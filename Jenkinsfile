@@ -38,20 +38,11 @@ pipeline {
 		stage('Run') {			
 			steps {
 				sh '''
-					sudo nano /etc/systemd/system/fastapi-app.service
-					sudo systemctl daemon-reload
-					sudo systemctl enable fastapi-app
-					sudo systemctl start fastapi-app
-					sleep 10
-				'''
-			}
-		}
-
-		stage('Check') {
-			steps {
-				sh '''
 					. ./venv/bin/activate
+					sudo systemctl restart LiuliZhilu_Main
+					sleep 5
 					curl -f http://localhost:5126/ || exit 1
+
 				'''
 			}
 		}
