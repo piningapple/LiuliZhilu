@@ -38,12 +38,16 @@ pipeline {
 		stage('Run') {			
 			steps {
 				sh '''
+					. ./venv/bin/activate
+
 					sudo systemctl stop fastapi-app || true
-					
+
                     sudo systemctl daemon-reload
                     sudo systemctl start fastapi-app
                     sudo systemctl enable fastapi-app
-                    
+
+					sleep 10
+
 				'''
 			}
 		}
