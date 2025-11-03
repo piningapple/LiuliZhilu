@@ -23,7 +23,7 @@ class Word(BaseModel):
 
 class Definition(BaseModel):
     definition_id = TextField(column_name='DefinitionId')
-    word_id  = ForeignKeyField(Word, related_name="definitions", column_name='Word')
+    word_id  = ForeignKeyField(Word, backref="definitions", column_name='Word')
     definition =  TextField(column_name='Definition', null=False)
 
 
@@ -32,7 +32,7 @@ class Definition(BaseModel):
 
 class Example(BaseModel):
     example_id = TextField(column_name='ExampleId')
-    definition_id  = ForeignKeyField(Definition, related_name="examples", column_name='Definition')
+    definition_id  = ForeignKeyField(Definition, backref="examples", column_name='Definition')
     example =  TextField(column_name='Example', null=False)
 
 

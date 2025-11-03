@@ -1,6 +1,13 @@
 import pytest
 from pinyin import getPinyin, getSegmentation, getSegAndPinText, getSegmentationWithPinyin
 
+from fastapi.testclient import TestClient
+from server import app
+import pytest
+
+client = TestClient(app)
+
+
 def test_get_pinyin():
     assert getPinyin('他在吗') == 'tāzàima'
      
@@ -30,5 +37,23 @@ def test_getSegAndPinText():
     assert len(sents['chrs']) == len(sents['pinyin']) 
     assert len(sents['chrs']) == 3
     
+    
+    
+def test_seg_pin_api():
+        
+    text = {'text': '哈喽，请进！我找娜娜，他在吗？他现在不在，但是马上就回来，请等一会儿！'}
+    response = client.post("/api/pinyin/", json=text)
+    assert response.status_code == 200
+    
+    sents = response.json()
+    
+    assert sents != ""
+    assert 'chrs' in sents.keys()
+    assert 'pinyin' in sents.keys()
+    
+    assert len(sents['chrs']) > 0
+    assert len(sents['pinyin']) > 0
+    assert len(sents['chrs']) == len(sents['pinyin'])
+
     
     
