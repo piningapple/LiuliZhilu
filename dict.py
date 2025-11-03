@@ -43,10 +43,11 @@ def total_words_dicts():
     print('-------------------------')
     print(f'total elements: {total}')
 
-# substr:               3.653.689   # if(processed_line[:2] == "['"):
+# substr:               3.653.689   # if processed_line[:2] == "['":
 # regex:                3.398.071   # r"\[\s*'([^']*)'\s*,\s*'([^']*)'\s*,\s*'([^']*)'\s*\]"
 # regex 2:              3.399.569   # r"\[\s*'([^']*)'\s*,\s*'([^']*)'\s*,\s*'([^']*)'\s*\]*"
-# regex 3:              3.399.620   # r"\[\s*'((?:[^'\\]|\\.)*)'\s*,\s*'((?:[^'\\]|\\.)*)'\s*,\s*'((?:[^'\\]|\\.)*)'\s*\]"
+# regex 3:              3.399.620   # r"\[\s*'((?:[^'\\]|\\.)*)'\s*,\s*'((?:[^'\\]|\\.)*)'\s*,
+# \s*'((?:[^'\\]|\\.)*)'\s*\]"
 # regex 3 with skip:    3.399.298   # Это правильно!
 def total_words_html():
     path = "html_dabkrs_bruks/dabkrs.html"
@@ -55,19 +56,19 @@ def total_words_html():
     total = 0
     skipped = 0
 
-    chars_set = list()
+    chars_set = []
 
     with open(path, 'r', encoding='utf-8') as file:
         for i in range(3665907):
             try:
                 line = file.readline()
-                
-                #if(i < 8515):
-                if (i<8907):
+
+                #if i < 8515:
+                if i<8907:
                     continue
 
                 processed_line = line.strip()
-                if(re.match(pattern, processed_line)):
+                if re.match(pattern, processed_line):
                     total += 1
                     chars_set.append(processed_line)
 
@@ -76,9 +77,9 @@ def total_words_html():
                 skipped += 1
                 continue
 
-            if(i % 500000 == 0):
+            if i % 500000 == 0:
                 print('line', i, 'passed \t|\t found:', total, ' \t|\t skipped:', skipped)
-    
+
     print('-------------------------')
     print(f'total elements: {total}')
 
@@ -97,12 +98,12 @@ def html_and_dict_diff():
     with open(path_html, 'r', encoding='utf-8') as file:
         for i in range(3665907):
             line = file.readline()
-                
-            if(i < 8515):
+
+            if i < 8515:
                 continue
 
             processed_line = line.strip()
-            if(re.match(pattern, processed_line)):
+            if re.match(pattern, processed_line):
                 a = ast.literal_eval(processed_line)[0]
                 chars_set.append(a[0])
     print(f"Считал из html: {len(chars_set)} иероглифов")
@@ -110,7 +111,7 @@ def html_and_dict_diff():
 
 
     # Dicts
-    
+
     print("Читаю словари")
     dict_paths = [
         "dsl_dabkrs_250920/dabkrs_1.dsl",
@@ -125,10 +126,10 @@ def html_and_dict_diff():
         print(f"Считал словарь {path}")
 
         for card in dsl_dict.cards:
-            if(card.word not in chars_set):
+            if card.word not in chars_set:
                 print(f"Нету слова {card.word} | {card.definitions}")
                 diff += 1
-    
+
     print("---------------------")
     print(f"Итого не найдено: {diff}")
 
@@ -161,14 +162,14 @@ def dict_and_html_diff():
     with open(path_html, 'r', encoding='utf-8') as file:
         for i in range(3665907):
             line = file.readline()
-                
-            if(i < 8515):
+
+            if i < 8515:
                 continue
 
             processed_line = line.strip()
-            if(re.match(pattern, processed_line)):
+            if re.match(pattern, processed_line):
                 a = ast.literal_eval(processed_line)[0]
-                if(a[0] not in chars_set):
+                if a[0] not in chars_set:
                     print(f"Нету слова {a[0]} | {a}")
                     diff += 1
 
@@ -187,18 +188,17 @@ def normalize_dict():
     with open(path_html, 'r', encoding='utf-8') as file:
         for i in range(3665907):
             line = file.readline()
-                
-            if(i < 8515):
+
+            if i < 8515:
                 continue
 
-            processed_line = line.strip()
-            if(re.match(pattern, processed_line)):
-                a = ast.literal_eval(processed_line)[0]
+            if re.match(pattern, line.strip()):
+                a = ast.literal_eval(line.strip())[0]
                 chars_set_html.add(a[0])
     print(f"Считал из html: {len(chars_set_html)} иероглифов")
 
     # Dicts
-    
+
     # Set from dicts
     chars_set_dicts = set()
 
@@ -221,48 +221,48 @@ def normalize_dict():
     for word in chars_set_html:
         if word in chars_set_dicts:
             char_norm_dict.add(word)
-    
+
     print("Слов", len(char_norm_dict))
 
-    char_norm_dict_definitions = list()
-    
+    char_norm_dict_definitions = []
+
     with open(path_html, 'r', encoding='utf-8') as file:
         for i in range(3665907):
             line = file.readline()
-                
-            if(i < 8515):
+
+            if i < 8515:
                 continue
 
             processed_line = line.strip()
-            if(re.match(pattern, processed_line)):
+            if re.match(pattern, processed_line):
                 a = ast.literal_eval(processed_line)[0]
-                if(a[0] in char_norm_dict):
+                if a[0] in char_norm_dict:
                     char_norm_dict_definitions.append(a)
 
     print("words", len(char_norm_dict_definitions))
     for i in range(5):
         print(char_norm_dict_definitions[i])
 
-                    
-def getParsedHtml():
+
+def get_parsed_html():
     path = "html_dabkrs_bruks/dabkrs.html"
     pattern = r"\[\s*'((?:[^'\\]|\\.)*)'\s*,\s*'((?:[^'\\]|\\.)*)'\s*,\s*'((?:[^'\\]|\\.)*)'\s*\]"
 
     total = 0
     skipped = 0
 
-    chars_set = list()
+    chars_set = []
 
     with open(path, 'r', encoding='utf-8') as file:
         for i in range(3665907):
             try:
                 line = file.readline()
 
-                if (i<8906):
+                if i<8906:
                     continue
 
                 processed_line = line.strip()
-                if(re.match(pattern, processed_line)):
+                if re.match(pattern, processed_line):
                     total += 1
                     chars_set.append(processed_line)
 
@@ -271,21 +271,21 @@ def getParsedHtml():
                 skipped += 1
                 continue
 
-            if(i % 500000 == 0):
+            if i % 500000 == 0:
                 print('line', i, 'passed \t|\t found:', total, ' \t|\t skipped:', skipped)
-    
+
     print('-------------------------')
     print(f'total elements: {total}')
 
     for i in range(len(chars_set)):
-        cs = chars_set[i].replace("['","") 
+        cs = chars_set[i].replace("['","")
         cs = cs.replace("'],","")
         cs = cs.split("','")
         chars_set[i]=cs
-        
+
         defs = re.split(r'(?=\n?\d+\))', chars_set[i][2])
 
-        result = list()
+        result = []
         for defin in defs:
             if defin.strip():
                 lines = [line.strip() for line in defin.split('\\n') if line.strip()]
@@ -295,8 +295,8 @@ def getParsedHtml():
         chars_set[i][2] = result
 
     #print(chars_set[31])
-    
-    
+
+
     return chars_set
 
 
@@ -307,4 +307,3 @@ def getParsedHtml():
 # html_and_dict_diff()
 #dict_and_html_diff()
 #normalize_dict()
-
