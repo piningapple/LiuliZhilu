@@ -48,7 +48,7 @@ pipeline {
 			steps {
 				sh '''
                     . ./venv/bin/activate
-                    uvicorn server:app --host 0.0.0.0 --port 5126 --reload
+                    uvicorn main:app 
 					sleep 5
 					curl -f http://localhost:5126/ || exit 1
 				'''
