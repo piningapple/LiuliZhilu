@@ -11,17 +11,18 @@ class BaseModel(Model):
     """Базовая модель от которой будут наследоваться остальные"""
 
     class Meta:
+        """Мета для базовой модели"""
         database = conn
 
 class Word(BaseModel):
     """Модель слов"""
-
     word_id = TextField(column_name='WordId')
     character = TextField(column_name='Character', null=False)
     pinyin =  TextField(column_name='Pinin', null=True)
 
-    class Meta:
 
+    class Meta:
+        """Мета для модели слов"""
         table_name = 'Words'
 
 class Definition(BaseModel):
@@ -33,6 +34,7 @@ class Definition(BaseModel):
 
 
     class Meta:
+        """Мета для модели определений"""
         table_name = 'Definitions'
 
 class Example(BaseModel):
@@ -44,6 +46,7 @@ class Example(BaseModel):
 
 
     class Meta:
+        """Мета для модели примеров"""
         table_name = 'Examples'
 
 # cоздаем курсор

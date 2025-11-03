@@ -35,6 +35,15 @@ pipeline {
 			}
 		}
 
+		stage('Pylint'){
+			steps {
+				sh '''
+                    . ./venv/bin/activate
+                    pylint *.py             
+                '''
+			}
+		}	
+
 		stage('Run') {			
 			steps {
 				sh '''

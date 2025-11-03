@@ -1,6 +1,8 @@
+"""модуль для работы со словарем"""
 import re
 
 def total_words_html():
+    """метод для подсчёта количества слов в словаре"""
     path = "html_dabkrs_bruks/dabkrs.html"
     pattern = r"\[\s*'((?:[^'\\]|\\.)*)'\s*,\s*'((?:[^'\\]|\\.)*)'\s*,\s*'((?:[^'\\]|\\.)*)'\s*\]"
 
@@ -38,6 +40,7 @@ def total_words_html():
         print(chars_set[i])
 
 def get_parsed_html():
+    """метод для парсинга словаря"""
     path = "html_dabkrs_bruks/dabkrs.html"
     pattern = r"\[\s*'((?:[^'\\]|\\.)*)'\s*,\s*'((?:[^'\\]|\\.)*)'\s*,\s*'((?:[^'\\]|\\.)*)'\s*\]"
 
@@ -88,8 +91,4 @@ def get_parsed_html():
         chars_set[i][2] = result
 
     #print(chars_set[31])
-
-
     return chars_set
-
-
