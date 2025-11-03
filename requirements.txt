@@ -2,7 +2,9 @@ requests == 2.32.5
 BeautifulSoup4 == 4.14.2
 FastAPI ==  0.118.0
 uvicorn[standard] == 0.37.0
-dsl_dict_analyser==0.0.6
 pylint==3.3.9
 peewee == 3.18.2
+pytest == 8.4.2
+jieba ==0.42.1
+dragonmapper == 0.3.0
 httpx == 0.28.1
