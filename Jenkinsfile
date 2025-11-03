@@ -39,17 +39,27 @@ pipeline {
 			}
 		}
 
-
 		stage('Run') {
 			when {
 				branch 'features/pinyin'
 			}
-
+			
 			steps {
 				sh '''
-                    . ./venv/bin/activate
-                    uvicorn server:app --host 0.0.0.0 --port 5126
-					sleep 5
+					. ./venv/bin/activate
+					nohup uvicorn server:app --host 0.0.0.0 --port 5126 > uvicorn.log 2>&1 &
+					echo $! > uvicorn.pid
+					sleep 10
+				'''
+			}
+		}
+
+		stage('check') {
+			when {
+				branch 'features/pinyin'
+			}
+			steps {
+				sh '''
 					curl -f http://localhost:5126/ || exit 1
 				'''
 			}
