@@ -48,7 +48,7 @@ pipeline {
 			steps {
 				sh '''
                     . ./venv/bin/activate
-                    uvicorn main:app 
+                    uvicorn server:app 
 					sleep 5
 					curl -f http://localhost:5126/ || exit 1
 				'''
