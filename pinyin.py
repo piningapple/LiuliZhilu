@@ -8,9 +8,7 @@ def getSegmentation(sentence):
     seg_list = jieba.cut(sentence, HMM=True) # с использованием скрытой марковской модели для анализа любых нестандартных фраз и текстов.
     #seg_list = jieba.cut(sentence, cut_all = False) # наиболее вероятная сегментация
     #seg_list = jieba.cut(sentence, cut_all = True) # все варианты сегментации
-
-    #print("/ ".join(seg_list))
-
+    
     return " ".join(seg_list)
 
 
