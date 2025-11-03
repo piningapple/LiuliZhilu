@@ -10,7 +10,7 @@ conn = SqliteDatabase('Dict_Sqlite.sqlite')
 class BaseModel(Model):
     """Базовая модель от которой будут наследоваться остальные"""
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """Мета для базовой модели"""
         database = conn
 
@@ -21,7 +21,7 @@ class Word(BaseModel):
     pinyin =  TextField(column_name='Pinin', null=True)
 
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """Мета для модели слов"""
         table_name = 'Words'
 
@@ -33,7 +33,7 @@ class Definition(BaseModel):
     definition =  TextField(column_name='Definition', null=False)
 
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """Мета для модели определений"""
         table_name = 'Definitions'
 
@@ -45,7 +45,7 @@ class Example(BaseModel):
     example =  TextField(column_name='Example', null=False)
 
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """Мета для модели примеров"""
         table_name = 'Examples'
 
@@ -90,9 +90,9 @@ def add_data():
 
         word_count+=1
         if word_count % 1000 == 0:
-            Word.insert_many(words).execute()
-            Definition.insert_many(definitions).execute()
-            Example.insert_many(examples).execute()
+            Word.insert_many(words).execute(database=conn)
+            Definition.insert_many(definitions).execute(database=conn)
+            Example.insert_many(examples).execute(database=conn)
 
             words = []
             definitions = []
@@ -102,9 +102,9 @@ def add_data():
             print("save ", word_count , " words" )
 
 
-    Word.insert_many(words).execute()
-    Definition.insert_many(definitions).execute()
-    Example.insert_many(examples).execute()
+    Word.insert_many(words).execute(database=conn)
+    Definition.insert_many(definitions).execute(database=conn)
+    Example.insert_many(examples).execute(database=conn)
 
 #recreateDB()
 #addData()
@@ -118,7 +118,7 @@ def get_translation_with_examples(char):
 
     translation = {}
 
-    for w in query:
+    for w in list(query):
        #print(w.character)
         translation['character'] = w.character
         translation['pinyin'] = w.pinyin
@@ -126,13 +126,13 @@ def get_translation_with_examples(char):
             .select(Definition)
             .where(Definition.word_id == w.word_id))
         translation['definitions'] = {}
-        for d in query2:
+        for d in list(query2):
             #print(d.definition)
             translation['definitions'][d.definition] = []
             query3 = (Example
                 .select(Example)
                 .where(d.definition_id == Example.definition_id))
-            for e in query3:
+            for e in list(query3):
                 #print(e.example)
                 translation['definitions'][d.definition].append(e.example)
 

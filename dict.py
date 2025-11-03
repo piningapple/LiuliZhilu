@@ -25,7 +25,7 @@ def total_words_html():
                     total += 1
                     chars_set.append(processed_line)
 
-            except Exception as e:
+            except Exception as e: # pylint: disable=broad-exception-caught
                 print(f'skipped {i} line | {e}')
                 skipped += 1
                 continue
@@ -62,7 +62,7 @@ def get_parsed_html():
                     total += 1
                     chars_set.append(processed_line)
 
-            except Exception as e:
+            except Exception as e: # pylint: disable=broad-exception-caught
                 print(f'skipped {i} line | {e}')
                 skipped += 1
                 continue
@@ -73,7 +73,7 @@ def get_parsed_html():
     print('-------------------------')
     print(f'total elements: {total}')
 
-    for i in range(len(chars_set)):
+    for i in range(len(list(chars_set))):
         cs = chars_set[i].replace("['","")
         cs = cs.replace("'],","")
         cs = cs.split("','")

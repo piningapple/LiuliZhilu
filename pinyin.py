@@ -2,7 +2,9 @@
 import re
 import jieba
 import dragonmapper
+# pylint: disable=unused-import
 from dragonmapper import hanzi
+# pylint: enable=unused-import
 
 def get_segmentation(sentence):
     """сегментация предложения"""
