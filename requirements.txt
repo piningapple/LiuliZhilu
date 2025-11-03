@@ -5,3 +5,4 @@ uvicorn[standard] == 0.37.0
 dsl_dict_analyser==0.0.6
 pylint==3.3.9
 peewee == 3.18.2
+httpx == 0.28.1
