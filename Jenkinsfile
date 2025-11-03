@@ -38,11 +38,11 @@ pipeline {
 		stage('Run') {			
 			steps {
 				sh '''
-					. ./venv/bin/activate
-					nohup uvicorn server:app --host 0.0.0.0 --port 5126 > server.log 2>&1 &
-                    echo $! > server.pid
+					sudo nano /etc/systemd/system/fastapi-app.service
+					sudo systemctl daemon-reload
+					sudo systemctl enable fastapi-app
+					sudo systemctl start fastapi-app
 					sleep 10
-
 				'''
 			}
 		}
