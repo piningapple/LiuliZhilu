@@ -39,7 +39,7 @@ pipeline {
 			steps {
 				sh '''
 					. ./venv/bin/activate
-					sudo systemctl restart LiuliZhilu
+					sudo systemctl restart LiuliZhilu_main
 					sleep 5
 					curl -f http://localhost:5126/ || exit 1
 
