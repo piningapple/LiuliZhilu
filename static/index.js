@@ -12,22 +12,22 @@ const textChars = document.getElementById("chars")
 const textPinyin = document.getElementById("pinyin")
 
 let originalText = ""
+let segText = ""
 let sliderState = 0
 
 form.addEventListener("submit", async (e) => {
     e.preventDefault()
     if (input.value != "") {
         ph.style.display = "none"
-        let strs = input.value.replace(/\n/g, '').split(/(?<=[！？。])/).filter(element => element !== '')
         originalText = input.value
         if (sliderState === 0) {
-            textEl.innerText = input.value
+            textEl.innerText = originalText
         }
         else if (sliderState === 1) {
-            textEl.innerHTML = await getCharsAndPinyin(strs)
+            textEl.innerHTML = await getCharsAndPinyin(originalText)
         }
         else if (sliderState === 2) {
-            textEl.innerText = await getPinyin(strs)
+            textEl.innerText = await getPinyin(originalText)
         }
         //lookbehind (?<=...) - позиция, которая предшествует указанному шаблону
         input.value = ""
@@ -46,9 +46,11 @@ slider.addEventListener("click", async () => {
         sliderBall.style.transform = 'translateX(31px)';
         textChars.style.color = '#374151'
         textBoth.style.color = 'white'
-        if (originalText){
-            let strs = originalText.replace(/\n/g, '').split(/(?<=[！？。])/).filter(element => element !== '')
-            textEl.innerHTML = await getCharsAndPinyin(strs)
+        if (originalText) {
+            if (!segText)
+                textEl.innerHTML = await getCharsAndPinyin(originalText)
+            else
+                textEl.innerHTML = await transformCharsAndPinyin(segText)
         }
         sliderState = 1;
 
@@ -57,9 +59,11 @@ slider.addEventListener("click", async () => {
         sliderBall.style.transform = 'translateX(60px)';
         textBoth.style.color = '#374151'
         textPinyin.style.color = 'white'
-        if (originalText){
-            let strs = originalText.replace(/\n/g, '').split(/(?<=[！？。])/).filter(element => element !== '')
-            textEl.innerText = await getPinyin(strs)
+        if (originalText) {
+            if (!segText)
+                textEl.innerText = await getPinyin(originalText)
+            else
+                textEl.innerText = transformPinyin(segText['pinyin'])
         }
 
         sliderState = 2;
@@ -109,16 +113,46 @@ async function getPinyin(text) {
     });
     if (response.ok) {
         data = await response.json();
-        pinyin = data['pinyin']
-        pinyin = pinyin.map(element => element.charAt(0).toUpperCase()+element.slice(1))
+        segText = data
+        pinyin = transformPinyin(data['pinyin'])
 
-        pinyin = pinyin.map(sentence => sentence.replace(/\s*([，。！？])\s*/g, '$1').replace(/\s+/g, ' ').trim()).join(' ');
 
     } else
         console.log(response);
 
 
     return await pinyin
+}
+
+function transformPinyin(pinyin) {
+    pinyin = pinyin.map(element => element.charAt(0).toUpperCase() + element.slice(1))
+    pinyin = pinyin.map(sentence => sentence.replace(/\s*([，。！？])\s*/g, '$1').replace(/\s+/g, ' ').trim()).join(' ');
+
+    return pinyin
+}
+
+function transformCharsAndPinyin(data) {
+    pinyinText =""
+    const simb = ['！', '？', '。', ' '];
+
+    for (let i = 0; i < Object.keys(data['chrs']).length; i++) {
+        chrs = data['chrs'][i].split(" ").filter(element => element !== '')
+        pinyin = data['pinyin'][i].split(" ").filter(element => element !== '')
+        pinyin[0] = pinyin[0].charAt(0).toUpperCase() + pinyin[0].slice(1)
+
+        for (let j = 0; j < chrs.length; j++) {
+            if (!chrs[j].includes(simb)) {
+                pinyinText += '<ruby class="inline-flex flex-col items-center mx-[1px]">' + chrs[j] + '<rt class="text-xs text-gray-500 ">' + pinyin[j] + '</rt></ruby>'
+            }
+            else {
+                pinyinText += chrs[j]
+            }
+
+        }
+    }
+
+    return pinyinText
+
 }
 
 async function getCharsAndPinyin(text) {
@@ -133,30 +167,9 @@ async function getCharsAndPinyin(text) {
     });
     if (response.ok) {
         const data = await response.json();
-        const simb = ['！', '？', '。', ' '];
+        segText = data
+        pinyinText = transformCharsAndPinyin(data)
 
-
-
-        for (let i = 0; i < Object.keys(data['chrs']).length; i++) {
-
-            chrs = data['chrs'][i].split(" ").filter(element => element !== '')
-            pinyin = data['pinyin'][i].split(" ").filter(element => element !== '')
-            pinyin[0] = pinyin[0].charAt(0).toUpperCase()+pinyin[0].slice(1)
-
-
-
-            for (let j = 0; j < chrs.length; j++) {
-                
-
-                if (!chrs[j].includes(simb)) {
-                    pinyinText += '<ruby class="inline-flex flex-col items-center mx-[1px]">' + chrs[j] + '<rt class="text-xs text-gray-500 ">' + pinyin[j] + '</rt></ruby>'
-                }
-                else {
-                    pinyinText += chrs[j]
-                }
-
-            }
-        }
     }
     else
         console.log(response);
