@@ -40,6 +40,7 @@ exampleBtn.addEventListener("click", () => {
 })
 
 slider.addEventListener("click", async () => {
+    closePopup()
 
     if (sliderState === 0) {
         sliderBall.style.transform = 'translateX(31px)';
@@ -165,8 +166,8 @@ async function getCharsAndPinyin(text) {
 }
 
 function showPopup(mouseX, mouseY) {
-    popup.style.left = `${mouseX} px`;
-    popup.style.top = `${mouseY} px`;
+    popup.style.left = mouseX + 'px';
+    popup.style.top = mouseY + 'px';
     popup.style.display = "block"
 }
 
