@@ -39,13 +39,8 @@ pipeline {
 			steps {
 				sh '''
 					. ./venv/bin/activate
-
-					sudo systemctl stop fastapi-app || true
-
-                    sudo systemctl daemon-reload
-                    sudo systemctl start fastapi-app
-                    sudo systemctl enable fastapi-app
-
+					nohup uvicorn server:app --host 0.0.0.0 --port 5126 > server.log 2>&1 &
+                    echo $! > server.pid
 					sleep 10
 
 				'''
