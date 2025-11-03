@@ -27,10 +27,6 @@ pipeline {
 		}
 
 		stage('Tests'){
-            when {
-				branch 'features/pinyin'
-			}
-
 			steps {
 				sh '''
                     . ./venv/bin/activate
@@ -39,11 +35,7 @@ pipeline {
 			}
 		}
 
-		stage('Run') {
-			when {
-				branch 'features/pinyin'
-			}
-			
+		stage('Run') {			
 			steps {
 				sh '''
 					. ./venv/bin/activate
@@ -58,10 +50,6 @@ pipeline {
 		}
 
 		stage('Check') {
-			when {
-				branch 'features/pinyin'
-			}
-
 			steps {
 				sh '''
 					. ./venv/bin/activate
