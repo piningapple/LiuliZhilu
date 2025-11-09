@@ -1,6 +1,7 @@
 """ модуль для работы с базой данных """
+import csv
 import uuid
-from peewee import SqliteDatabase, Model, TextField, ForeignKeyField
+from peewee import SqliteDatabase, Model, TextField, ForeignKeyField, IntegerField
 from dict import get_parsed_html
 
 # соединение с базой данных
@@ -49,6 +50,19 @@ class Example(BaseModel):
         """Мета для модели примеров"""
         table_name = 'Examples'
 
+class HSK_Word(BaseModel):
+    """Модель слов для HSK"""
+    hsk_word_id = TextField(column_name='HskWordId')
+    character = TextField(column_name='Character', null=False)
+    level = IntegerField(column_name='Level', null=False)
+    pinyin =  TextField(column_name='Pinyin', null=True)
+    definitions = TextField(column_name='Definitions', null=False)
+
+
+    class Meta:  # pylint: disable=too-few-public-methods
+        """Мета для модели слов HSK"""
+        table_name = 'HSK_Words'
+
 # cоздаем курсор
 cursor = conn.cursor()
 
@@ -56,11 +70,12 @@ cursor = conn.cursor()
 def recreate_db():
     """функция для пересоздания базы данных"""
 
-    conn.drop_tables([Word, Definition, Example])
+    conn.drop_tables([Word, Definition, Example, HSK_Word])
 
     Word.create_table()
     Definition.create_table()
     Example.create_table()
+    HSK_Word.create_table()
 
 def add_data():
     """функция для добавление данных"""
@@ -109,6 +124,26 @@ def add_data():
 #recreateDB()
 #addData()
 
+def addHSKTable():
+    conn.drop_tables([HSK_Word])
+
+    HSK_Word.create_table()
+
+def addHSKData():
+
+    for i in range(1,7):
+        with open(f'./data/hsk/csv/hsk{i}_words.csv', 'r', encoding='utf-8') as file:
+            reader = csv.DictReader(file)
+            all_data = []
+            
+            for row in reader: 
+                row['hsk_word_id'] =str(uuid.uuid4())
+                row['level'] = i     
+                all_data.append(row)  # Накопление данных
+    
+            HSK_Word.insert_many(all_data).execute(database=conn)
+
+
 def get_translation_with_examples(char):
     """функция для получения из базы данных определения с примерами"""
 
@@ -145,6 +180,9 @@ def get_translation_with_examples(char):
 #            print(ex)
 
 #get_translation_with_examples('妈')
+
+addHSKTable()
+addHSKData()
 
 # закрыть соединение с базой данных
 conn.close()

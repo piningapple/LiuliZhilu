@@ -25,7 +25,7 @@ def read_lines_to_list(filename):
             #if ';' in translation:
             #   translation = translation.replace('; ',";").split(';')
         
-            lines[i] =[[char],[pinyin], [translation]]     
+            lines[i] =[char,pinyin, translation]     
 
     return lines
 
@@ -33,6 +33,6 @@ for i in range(1,7):
     if not  os.path.exists(f'./data/hsk/csv/hsk{i}_words.csv'):
         lines = read_lines_to_list(f'./data/hsk/txt/hsk{i}_words.txt')
         print(lines[0])
-        lines = pd.DataFrame(lines, columns=['Слово','Пиньинь','Перевод слова'])
+        lines = pd.DataFrame(lines, columns=['character','pinyin','definitions'])
         lines.to_csv(f'./data/hsk/csv/hsk{i}_words.csv', index=False)
         print(f'{i}: ok')
