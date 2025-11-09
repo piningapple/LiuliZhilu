@@ -8,3 +8,4 @@ pytest == 8.4.2
 jieba ==0.42.1
 dragonmapper == 0.3.0
 httpx == 0.28.1
+pandas == 2.3.3

@@ -30,7 +30,8 @@ share/python-wheels/
 *.egg
 MANIFEST
 MeowDo.md
-docs/
+data/bkrs
+data/hsk/txt
 Dict_Sqlite.sqlite
 dabkrs.html
 
