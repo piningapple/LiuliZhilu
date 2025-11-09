@@ -1,6 +1,8 @@
 import re
 import os.path
 import pandas as pd
+from pinyin import get_seg_text
+from database_dict import get_word_level
 
 def read_lines_to_list(filename):
     with open(filename, 'r', encoding='utf-8') as file:
@@ -29,10 +31,24 @@ def read_lines_to_list(filename):
 
     return lines
 
-for i in range(1,7):
-    if not  os.path.exists(f'./data/hsk/csv/hsk{i}_words.csv'):
-        lines = read_lines_to_list(f'./data/hsk/txt/hsk{i}_words.txt')
-        print(lines[0])
-        lines = pd.DataFrame(lines, columns=['character','pinyin','definitions'])
-        lines.to_csv(f'./data/hsk/csv/hsk{i}_words.csv', index=False)
-        print(f'{i}: ok')
+def text_to_csv():
+    for i in range(1,7):
+        if not  os.path.exists(f'./data/hsk/csv/hsk{i}_words.csv'):
+            lines = read_lines_to_list(f'./data/hsk/txt/hsk{i}_words.txt')
+            print(lines[0])
+            lines = pd.DataFrame(lines, columns=['character','pinyin','definitions'])
+            lines.to_csv(f'./data/hsk/csv/hsk{i}_words.csv', index=False)
+            print(f'{i}: ok')
+
+def analyze_text(text):
+    chars = get_seg_text(text)
+    print(chars)
+    levels = []
+
+    for char in chars:
+        levels.append([char,get_word_level(char)])
+        
+    print(levels)
+
+analyze_text('我喜欢西兰花')
+

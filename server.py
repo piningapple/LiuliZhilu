@@ -5,6 +5,8 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pinyin import get_seg_and_pin_text
 from database_dict import get_translation_with_examples
+from hsk import analyze_text
+
 
 app = FastAPI()
 
@@ -24,6 +26,12 @@ async def get_translate(ch):
 async def get_pinyin(text = Body()):
     """сегментация и получение пиньина"""
     return  get_seg_and_pin_text(text['text'])
+
+@app.post("/api/analyze")
+async def get_HSK_analysis(text = Body()):
+    """анализ сложности текста по HSK"""
+    return  analyze_text(text['text'])
+
 
 
 if __name__ == "__main__":

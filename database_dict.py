@@ -3,6 +3,7 @@ import csv
 import uuid
 from peewee import SqliteDatabase, Model, TextField, ForeignKeyField, IntegerField
 from dict import get_parsed_html
+from pinyin import get_all_segmentation
 
 # соединение с базой данных
 conn = SqliteDatabase('Dict_Sqlite.sqlite')
@@ -179,10 +180,38 @@ def get_translation_with_examples(char):
 #        for ex in translation['definitions'][key]:
 #            print(ex)
 
+
+def get_word_level(char):
+    level = 100
+    query = (HSK_Word
+        .select(HSK_Word.level)
+        .where(HSK_Word.character == char))
+
+    for word in query:
+        if word.level<level:
+            level = word.level
+            print(level)
+
+
+    if level==100:
+        segments = get_all_segmentation(char).split()
+        for seg in segments:
+            print(seg)
+            query1 = (HSK_Word
+                .select(HSK_Word.level)
+                .where(HSK_Word.character == seg))
+            for word in query1:
+                print(level)
+                if word.level!=100 | word.level>level:
+                    level = word.level
+              
+    return level
 #get_translation_with_examples('妈')
 
-addHSKTable()
-addHSKData()
+#addHSKTable()
+#addHSKData()
+
+print(get_word_level("de"))
 
 # закрыть соединение с базой данных
 conn.close()
