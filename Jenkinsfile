@@ -35,7 +35,11 @@ pipeline {
 			}
 		}
 
-		stage('Pylint'){
+		stage('Run') {
+			when {
+				branch 'main'
+			}
+			
 			steps {
 				sh '''
                     . ./venv/bin/activate
@@ -44,7 +48,11 @@ pipeline {
 			}
 		}	
 
-		stage('Run') {			
+		stage('Check') {
+			when {
+				branch 'main'
+			}
+
 			steps {
 				sh '''
 					. ./venv/bin/activate
