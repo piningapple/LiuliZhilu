@@ -35,7 +35,11 @@ pipeline {
 			}
 		}
 
-		stage('Run') {			
+		stage('Run') {
+			when {
+				branch 'main'
+			}
+			
 			steps {
 				sh '''
 					. ./venv/bin/activate
@@ -50,6 +54,10 @@ pipeline {
 		}
 
 		stage('Check') {
+			when {
+				branch 'main'
+			}
+
 			steps {
 				sh '''
 					. ./venv/bin/activate
