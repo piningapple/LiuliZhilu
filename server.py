@@ -4,6 +4,7 @@ from fastapi import FastAPI, Body
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pinyin import get_seg_and_pin_text
+from recognition import get_image_recognition
 from database_dict import get_translation_with_examples
 
 app = FastAPI()
@@ -25,6 +26,10 @@ async def get_pinyin(text = Body()):
     """сегментация и получение пиньина"""
     return  get_seg_and_pin_text(text['text'])
 
+@app.get("/api/recognize")
+async def get_recoginze_text():
+    """распознавание текста"""
+    return  get_image_recognition()
 
 if __name__ == "__main__":
-    uvicorn.run("server:app", host='0.0.0.0', port=5126, reload=True)
+    uvicorn.run("server:app", host='127.0.0.1', port=8000, reload=True)

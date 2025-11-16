@@ -35,8 +35,11 @@ form.addEventListener("submit", async (e) => {
     }
 })
 
-exampleBtn.addEventListener("click", () => {
-    input.value = `哈喽，请进！我找娜娜，他在吗？他现在不在，但是马上就回来，请等一会儿！谢谢！不客气，哦，已经回来了！志刚你来得真巧！今天下午小王给我打电话，说他明天可以带我们去参观东方明珠。`
+exampleBtn.addEventListener("click", async () => {
+    //input.value = `哈喽，请进！我找娜娜，他在吗？他现在不在，但是马上就回来，请等一会儿！谢谢！不客气，哦，已经回来了！志刚你来得真巧！今天下午小王给我打电话，说他明天可以带我们去参观东方明珠。`
+    textEl.innerText = "Распознаем..."
+    text = await getImageRecognition()
+    textEl.innerText = text['text']
 })
 
 slider.addEventListener("click", async () => {
@@ -176,6 +179,13 @@ async function getCharsAndPinyin(text) {
 
 
     return await pinyinText
+}
+
+async function getImageRecognition() {
+    const response = await fetch(`/api/recognize`)
+
+    return await response.json()
+
 }
 
 function showPopup(mouseX, mouseY) {
