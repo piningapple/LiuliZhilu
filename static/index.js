@@ -131,6 +131,8 @@ function transformPinyin(pinyin) {
     return pinyin
 }
 
+
+
 function transformCharsAndPinyin(data) {
     pinyinText =""
     const simb = ['！', '？', '。', ' '];
