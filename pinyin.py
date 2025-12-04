@@ -73,8 +73,8 @@ def get_speech_parts(text):
         print(w.word, w.flag)
 
 
-print(get_speech_parts("地"))
-segmets = get_all_segmentation('我的熊猫').split()
-print(segmets)
-for seg in segmets:
-    print(get_speech_parts(seg))
+#print(get_speech_parts("地"))
+#segmets = get_all_segmentation('我的熊猫').split()
+#print(segmets)
+#for seg in segmets:
+#   print(get_speech_parts(seg))

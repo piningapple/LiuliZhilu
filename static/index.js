@@ -15,13 +15,15 @@ let originalText = ""
 let segText = ""
 let sliderState = 0
 
+const COLORS = new Map([[1, "red"], [2, "yellow"], [3, "orange"], [4, "green"], [5, 'purple'], [6,"blue"]], [100,"black"])
+
 form.addEventListener("submit", async (e) => {
     e.preventDefault()
     if (input.value != "") {
         ph.style.display = "none"
         originalText = input.value
         if (sliderState === 0) {
-            textEl.innerText = originalText
+            textEl.innerHTML = await getHskLevels(originalText)
         }
         else if (sliderState === 1) {
             textEl.innerHTML = await getCharsAndPinyin(originalText)
@@ -153,6 +155,33 @@ function transformCharsAndPinyin(data) {
 
     return pinyinText
 
+}
+
+
+async function getHskLevels(text) {
+        let hskText = ''
+
+    const response = await fetch("api/analyze", {
+        method: "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({
+            text: text
+        })
+    });
+    if (response.ok) {
+        const data = await response.json();
+        levelsText = data
+        levelsText.forEach(el => {
+            console.log(el)
+            hskText += `<span style="color: ` + COLORS.get(el[1]) +`">`+ el[0] +`<span/>`
+        });
+
+    }
+    else
+        console.log(response);
+
+
+    return await hskText
 }
 
 async function getCharsAndPinyin(text) {

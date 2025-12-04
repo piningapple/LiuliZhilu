@@ -42,13 +42,13 @@ def text_to_csv():
 
 def analyze_text(text):
     chars = get_seg_text(text)
-    print(chars)
     levels = []
 
     for char in chars:
         levels.append([char,get_word_level(char)])
         
-    print(levels)
 
-analyze_text('我喜欢西兰花')
+    return levels
+
+#analyze_text('我哈喽，请进！我找娜娜，他在吗？他现在不在，但是马上就回来，请等一会儿！谢谢！不客气，哦，已经回来了！志刚你来得真巧！今天下午小王给我打电话，说他明天可以带我们去参观东方明珠。')
 

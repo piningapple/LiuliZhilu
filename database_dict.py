@@ -190,18 +190,15 @@ def get_word_level(char):
     for word in query:
         if word.level<level:
             level = word.level
-            print(level)
 
 
     if level==100:
         segments = get_all_segmentation(char).split()
         for seg in segments:
-            print(seg)
             query1 = (HSK_Word
                 .select(HSK_Word.level)
                 .where(HSK_Word.character == seg))
             for word in query1:
-                print(level)
                 if word.level!=100 | word.level>level:
                     level = word.level
               
@@ -211,7 +208,7 @@ def get_word_level(char):
 #addHSKTable()
 #addHSKData()
 
-print(get_word_level("de"))
+#print(get_word_level("de"))
 
 # закрыть соединение с базой данных
 conn.close()
