@@ -56,16 +56,7 @@ pipeline {
 				sh 'dotnet build --configuration Release --no-restore'
 			}
 		
-			when {
-				branch 'main'
-			}
 
-			steps {
-				sh '''
-					docker-compose -f docker-compose.yml down
-					docker-compose -f docker-compose.yml build --no-cache
-				'''
-			}
 		}
 
 		stage('Docker Compose Build Release') {
