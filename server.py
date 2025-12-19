@@ -4,7 +4,7 @@ from fastapi import FastAPI, Body
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pinyin import get_seg_and_pin_text
-from database_dict import get_translation_with_examples
+#from database_dict import get_translation_with_examples
 
 app = FastAPI()
 
@@ -15,10 +15,10 @@ async def index():
     """главная страница"""
     return FileResponse("static/index.html")
 
-@app.get("/api/translate/")
-async def get_translate(ch):
-    """получение перевода иероглифа"""
-    return get_translation_with_examples(ch)
+# @app.get("/api/translate/")
+# async def get_translate(ch):
+#     """получение перевода иероглифа"""
+#     return get_translation_with_examples(ch)
 
 @app.post("/api/pinyin")
 async def get_pinyin(text = Body()):

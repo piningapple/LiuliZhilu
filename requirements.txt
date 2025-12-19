@@ -8,4 +8,5 @@ pytest == 8.4.2
 jieba ==0.42.1
 dragonmapper == 0.3.0
 httpx == 0.28.1
-psycopg2-binary==2.9.9
+psycopg2-binary==2.9.11
+
