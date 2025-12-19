@@ -68,6 +68,19 @@ pipeline {
 			}
 		}
 
+		stage('Docker Compose Build Release') {
+			when {
+				branch 'main'
+			}
+
+			steps {
+				sh '''
+					docker-compose -f docker-compose.yml down
+					docker-compose -f docker-compose.yml build --no-cache
+				'''
+			}
+		}
+
 		stage('Run Release') {
 			when {
 				branch 'main'
@@ -77,9 +90,12 @@ pipeline {
 				sh '''
                     docker-compose -f docker-compose.yml up -d
 					sleep 5
-					curl -f http://localhost:5126/ 			'''
+					curl -f http://localhost:5126 || exit 1
+				'''
 			}
 		}
+	}
+
 	}
 }
 
