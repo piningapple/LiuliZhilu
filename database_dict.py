@@ -1,10 +1,33 @@
 """ модуль для работы с базой данных """
 import uuid
-from peewee import SqliteDatabase, Model, TextField, ForeignKeyField
+from peewee import SqliteDatabase, PostgresqlDatabase, Model, TextField, ForeignKeyField, UUIDField
 from dict import get_parsed_html
+import psycopg2
+
 
 # соединение с базой данных
-conn = SqliteDatabase('Dict_Sqlite.sqlite')
+#conn = SqliteDatabase('Dict_Sqlite.sqlite')
+try:
+    conn = PostgresqlDatabase('LiuliZhiluDB', host='db', port=5432, user='postgres', password='postgres')
+    conn.connect()
+    conn.close()
+    
+except Exception:
+    s_conn = psycopg2.connect(
+            dbname='postgres',
+            user='postgres',
+            password='postgres',
+            host='db',
+            port=5432
+        )
+
+    s_conn.autocommit = True 
+    cursor = s_conn.cursor()
+            
+    cursor.execute(f'CREATE DATABASE "LiuliZhiluDB";')
+            
+    cursor.close()
+    s_conn.close()
 
 # КОД МОДЕЛЕЙ
 class BaseModel(Model):
@@ -16,7 +39,7 @@ class BaseModel(Model):
 
 class Word(BaseModel):
     """Модель слов"""
-    word_id = TextField(column_name='WordId')
+    id = UUIDField(primary_key=True, default=uuid.uuid4)
     character = TextField(column_name='Character', null=False)
     pinyin =  TextField(column_name='Pinin', null=True)
 
@@ -28,7 +51,7 @@ class Word(BaseModel):
 class Definition(BaseModel):
     """Модель определений"""
 
-    definition_id = TextField(column_name='DefinitionId')
+    id = UUIDField(primary_key=True, default=uuid.uuid4)
     word_id  = ForeignKeyField(Word, backref="definitions", column_name='Word')
     definition =  TextField(column_name='Definition', null=False)
 
@@ -40,7 +63,7 @@ class Definition(BaseModel):
 class Example(BaseModel):
     """Модель примеров"""
 
-    example_id = TextField(column_name='ExampleId')
+    id = UUIDField(primary_key=True, default=uuid.uuid4)
     definition_id  = ForeignKeyField(Definition, backref="examples", column_name='Definition')
     example =  TextField(column_name='Example', null=False)
 
@@ -51,7 +74,7 @@ class Example(BaseModel):
 
 # cоздаем курсор
 cursor = conn.cursor()
-
+#conn.connect()
 # КОД РАБОТЫ С БАЗОЙ ДАННЫХ
 def recreate_db():
     """функция для пересоздания базы данных"""
@@ -72,18 +95,18 @@ def add_data():
     examples = []
 
     for w in data:
-        word = {'word_id' : str(uuid.uuid4()), 'character' : w[0], 'pinyin' : w[1]}
+        word = {'id' : uuid.uuid4(), 'character' : w[0], 'pinyin' : w[1]}
         words.append(word)
         #print("save word ", w[0])
         for d in w[2]:
-            definition  = { 'definition_id': str(uuid.uuid4()),
-                            'word_id' : word.get('word_id'),
+            definition  = { 'id': uuid.uuid4(),
+                            'word_id' : word.get('id'),
                             'definition' : d[0]}
             #print("save definition ", d[0])
             definitions.append(definition)
             for e in range(1,len(d)):
-                example = { 'example_id': str(uuid.uuid4()),
-                            'definition_id' : definition.get('definition_id'),
+                example = { 'id': uuid.uuid4(),
+                            'definition_id' : definition.get('id'),
                             'example' :d[e]}
                 examples.append(example)
                 #print("save example ",d[e])
@@ -106,8 +129,8 @@ def add_data():
     Definition.insert_many(definitions).execute(database=conn)
     Example.insert_many(examples).execute(database=conn)
 
-#recreateDB()
-#addData()
+recreate_db()
+#add_data()
 
 def get_translation_with_examples(char):
     """функция для получения из базы данных определения с примерами"""
@@ -124,14 +147,14 @@ def get_translation_with_examples(char):
         translation['pinyin'] = w.pinyin
         query2 = (Definition
             .select(Definition)
-            .where(Definition.word_id == w.word_id))
+            .where(Definition.word_id == w.id))
         translation['definitions'] = {}
         for d in list(query2):
             #print(d.definition)
             translation['definitions'][d.definition] = []
             query3 = (Example
                 .select(Example)
-                .where(d.definition_id == Example.definition_id))
+                .where(d.id == Example.definition_id))
             for e in list(query3):
                 #print(e.example)
                 translation['definitions'][d.definition].append(e.example)

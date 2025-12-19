@@ -35,44 +35,34 @@ pipeline {
 			}
 		}
 
-		stage('Pylint'){
-			steps {
-				sh '''
-                    . ./venv/bin/activate
-                    pylint *.py             
-                '''
-			}
-		}	
-		
-		stage('Run') {
-			when {
-				branch 'main'
-			}
-			
-			steps {
-				sh '''
-                    . ./venv/bin/activate
-                    pylint *.py             
-                '''
-			}
-		}	
-
-		stage('Check') {
+		stage('Docker Compose Build Release') {
 			when {
 				branch 'main'
 			}
 
 			steps {
 				sh '''
-					. ./venv/bin/activate
-					sudo systemctl daemon-reload
-					sudo systemctl restart LiuliZhilu_main
-					sleep 5
-					curl -f http://localhost:5126/ || exit 1
-
+					docker-compose -f docker-compose.yml down
+					docker-compose -f docker-compose.yml build --no-cache
 				'''
 			}
 		}
 
+		stage('Run Release') {
+			when {
+				branch 'main'
+			}
+
+			steps {
+				sh '''
+                    docker-compose -f docker-compose.yml up -d
+					sleep 5
+					curl -f http://localhost:5126 || exit 1
+				'''
+			}
+		}
 	}
+
 }
+
+

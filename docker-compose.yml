@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: liulizhilu_app
+    build:
+      context: .
+      dockerfile: Dockerfile  
+    environment:
+      - ConnectionStrings__Database=Host=db;Port=5432;Database=LiuliZhiluDB;Username=postgres;Password=postgres
+    ports:
+      - "5126:8081"
+    depends_on:
+      - db
+
+  nginx:
+    container_name: liulizhilu_nginx
+    image: nginx:mainline
+    ports:
+      - "81:80"
+    volumes:
+      - "./nginx.conf:/etc/nginx/nginx.conf"
+    depends_on:
+      - app
+
+  db:
+    container_name: liulizhilu_database 
+    image: postgres:latest
+    ports: 
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - db_data:/var/lib/postgresql
+
+volumes:
+  db_data:    

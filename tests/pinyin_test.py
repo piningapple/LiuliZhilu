@@ -4,7 +4,9 @@ from fastapi.testclient import TestClient
 from server import app
 import pytest
 
+
 client = TestClient(app)
+
 
 
 def test_get_pinyin():
