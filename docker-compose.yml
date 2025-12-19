@@ -9,7 +9,7 @@ services:
     environment:
       - ConnectionStrings__Database=Host=db;Port=5432;Database=LiuliZhiluDB;Username=postgres;Password=postgres
     ports:
-      - "5126:8081"
+      - "5127:8081"
     depends_on:
       - db
 
@@ -36,3 +36,4 @@ services:
 
 volumes:
   db_data:    
+
