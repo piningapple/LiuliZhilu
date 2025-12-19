@@ -57,7 +57,7 @@ pipeline {
 				sh '''
                     docker-compose -f docker-compose.yml up -d
 					sleep 5
-					curl -f http://localhost:5126 || exit 1
+					curl -f http://localhost:5127 || exit 1
 				'''
 			}
 		}
