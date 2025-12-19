@@ -35,30 +35,6 @@ pipeline {
 			}
 		}
 
-		stage('Build Dev'){
-			when {
-				expression { 
-					return env.BRANCH_NAME == 'dev' || env.BRANCH_NAME.startsWith('feature/') 
-				}
-			}
-
-			steps {
-				sh 'dotnet build --configuration Debug --no-restore'
-			}
-		}
-
-		stage('Build Release'){
-			when {
-				branch 'main'
-			}
-
-			steps {
-				sh 'dotnet build --configuration Release --no-restore'
-			}
-		
-
-		}
-
 		stage('Docker Compose Build Release') {
 			when {
 				branch 'main'
