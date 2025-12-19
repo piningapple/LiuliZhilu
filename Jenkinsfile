@@ -35,44 +35,52 @@ pipeline {
 			}
 		}
 
-		stage('Pylint'){
-			steps {
-				sh '''
-                    . ./venv/bin/activate
-                    pylint *.py             
-                '''
+		stage('Build Dev'){
+			when {
+				expression { 
+					return env.BRANCH_NAME == 'dev' || env.BRANCH_NAME.startsWith('feature/') 
+				}
 			}
-		}	
+
+			steps {
+				sh 'dotnet build --configuration Debug --no-restore'
+			}
+		}
+
+		stage('Build Release'){
+			when {
+				branch 'main'
+			}
+
+			steps {
+				sh 'dotnet build --configuration Release --no-restore'
+			}
 		
-		stage('Run') {
-			when {
-				branch 'main'
-			}
-			
-			steps {
-				sh '''
-                    . ./venv/bin/activate
-                    pylint *.py             
-                '''
-			}
-		}	
-
-		stage('Check') {
 			when {
 				branch 'main'
 			}
 
 			steps {
 				sh '''
-					. ./venv/bin/activate
-					sudo systemctl daemon-reload
-					sudo systemctl restart LiuliZhilu_main
-					sleep 5
-					curl -f http://localhost:5126/ || exit 1
-
+					docker-compose -f docker-compose.yml down
+					docker-compose -f docker-compose.yml build --no-cache
 				'''
 			}
 		}
 
+		stage('Run Release') {
+			when {
+				branch 'main'
+			}
+
+			steps {
+				sh '''
+                    docker-compose -f docker-compose.yml up -d
+					sleep 5
+					curl -f http://localhost:5126/ 			'''
+			}
+		}
 	}
 }
+
+

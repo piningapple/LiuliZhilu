@@ -135,19 +135,25 @@ function transformPinyin(pinyin) {
 
 function transformCharsAndPinyin(data) {
     pinyinText =""
-    const simb = ['！', '？', '。', ' '];
+    const simb = ['！', '？', '。', ' ','-'];
 
     for (let i = 0; i < Object.keys(data['chrs']).length; i++) {
         chrs = data['chrs'][i].split(" ").filter(element => element !== '')
         pinyin = data['pinyin'][i].split(" ").filter(element => element !== '')
         pinyin[0] = pinyin[0].charAt(0).toUpperCase() + pinyin[0].slice(1)
 
+
+        console.log(chrs)
+
+
         for (let j = 0; j < chrs.length; j++) {
+
             if (!chrs[j].includes(simb)) {
                 pinyinText += '<ruby class="inline-flex flex-col items-center mx-[1px]">' + chrs[j] + '<rt class="text-xs text-gray-500 ">' + pinyin[j] + '</rt></ruby>'
             }
+
             else {
-                pinyinText += chrs[j]
+                pinyinText += chrs[j] + "!"
             }
 
         }
