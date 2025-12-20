@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: liulizhilu
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:mainline
+        ports:
+        - containerPort: 81
+        volumeMounts:
+        - mountPath: /etc/nginx/nginx.conf
+          name: nginx-config
+          subPath: nginx.conf
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: nginx-config
