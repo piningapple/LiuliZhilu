@@ -15,10 +15,7 @@ spec:
     spec:
       containers:
       - name: app
-        image: app:latest
+        image: app:mainline
         imagePullPolicy: Never
         ports:
         - containerPort: 8081
-        env:
-        - name: ConnectionStrings__Database
-          value: "Host=postgres;Port=5432;Database=LiuliZhiluDB;Username=postgres;Password=postgres"
