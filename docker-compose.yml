@@ -24,7 +24,7 @@ services:
       - app
 
   db:
-    container_name: liulizhilu_database 
+    container_name: liulizhilu_db 
     image: postgres:latest
     ports: 
       - "5433:5432"
