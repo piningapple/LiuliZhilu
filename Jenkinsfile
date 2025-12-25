@@ -53,13 +53,13 @@ pipeline {
 					
                     sh '''
                         if docker ps -a --format "{{.Names}}" | grep -q "liulizhilu_app"; then
-                            docker rm -f liulizhilu_database
+                            docker rm -f liulizhilu_app
                         fi
                     '''
 
 					sh '''
                         if docker ps -a --format "{{.Names}}" | grep -q "liulizhilu_nginx"; then
-                            docker rm -f liulizhilu_database
+                            docker rm -f liulizhilu_nginx
                         fi
                     '''
 
