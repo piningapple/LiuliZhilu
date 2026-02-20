@@ -31,6 +31,29 @@ def read_lines_to_list(filename):
 
     return lines
 
+def str_split(filename):
+    with open(filename, 'r', encoding='utf-8') as file:
+        word_count, raw_words = file.readlines()      
+        raw_words = raw_words[1:]
+        words = []
+
+        for i in range(2,int(word_count)+1):
+            word, raw_words = raw_words.split(str(i), 1)
+            words.append(word)
+            print(word)
+
+        print(raw_words)
+
+        words.append(raw_words)
+        print(len(words))
+
+
+        for w in words:
+            if  "(" in w[0]:
+                
+
+str_split(f'./data/hsk/hsk1_raw.txt')
+
 def text_to_csv():
     for i in range(1,7):
         if not  os.path.exists(f'./data/hsk/csv/hsk{i}_words.csv'):
