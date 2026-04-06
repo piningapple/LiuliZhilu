@@ -41,6 +41,28 @@ pipeline {
 			}
 
 			steps {
+
+				   sh 'docker-compose down || true'
+                    
+                    sh '''
+                        if docker ps -a --format "{{.Names}}" | grep -q "liulizhilu_database"; then
+                            docker rm -f liulizhilu_database
+                        fi
+                    '''
+
+					
+                    sh '''
+                        if docker ps -a --format "{{.Names}}" | grep -q "liulizhilu_app"; then
+                            docker rm -f liulizhilu_app
+                        fi
+                    '''
+
+					sh '''
+                        if docker ps -a --format "{{.Names}}" | grep -q "liulizhilu_nginx"; then
+                            docker rm -f liulizhilu_nginx
+                        fi
+                    '''
+
 				sh '''
 					docker-compose -f docker-compose.yml down
 					docker-compose -f docker-compose.yml build --no-cache
